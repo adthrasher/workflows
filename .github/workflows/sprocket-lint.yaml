@@ -15,13 +15,6 @@ jobs:
           run: |
             cargo install sprocket
         - name: Run sprocket
-          run: |
-            EXITCODE=0
-            echo "Checking WDL files using \`sprocket lint\`."
-            shopt -s extglob
-            files=$(find ./!(template) -name '*.wdl')
-            for file in $files; do
-              echo "  [***] $file [***]"
-              sprocket lint "$file" || EXITCODE=$(($? || EXITCODE))
-            done
-            exit $EXITCODE
+          uses: stjudecloud/sprocket-action@v0.1.0
+          with:
+            lint: true
