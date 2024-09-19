@@ -11,5 +11,5 @@ jobs:
           uses: stjude-rust-labs/sprocket-action@v0.4.0-beta
           with:
             lint: true
-            exclude-paths: template
+            exclude-patterns: template
             deny-warnings: true
