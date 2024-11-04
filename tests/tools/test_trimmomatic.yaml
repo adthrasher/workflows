@@ -1,0 +1,26 @@
+- name: trimmomatic
+  tags:
+    - miniwdl
+    - trimmomatic
+  command: >-
+    miniwdl run -d test-output/. --task trimmomatic -i tests/tools/input_json/trimmomatic_1_thread.json tools/trimmomatic.wdl
+  files:
+    - path: test-output/out/trimmed_reads/trimmed_reads.fastq
+
+- name: trimmomatic_threads_2
+  tags:
+    - miniwdl
+    - trimmomatic
+  command: >-
+    miniwdl run -d test-output/. --task trimmomatic -i tests/tools/input_json/trimmomatic_2_threads.json tools/trimmomatic.wdl
+  files:
+    - path: test-output/out/trimmed_reads/trimmed_reads.fastq
+
+- name: trimmomatic_threads_4
+  tags:
+    - miniwdl
+    - trimmomatic
+  command: >-
+    miniwdl run -d test-output/. --task trimmomatic -i tests/tools/input_json/trimmomatic_4_threads.json tools/trimmomatic.wdl
+  files:
+    - path: test-output/out/trimmed_reads/trimmed_reads.fastq

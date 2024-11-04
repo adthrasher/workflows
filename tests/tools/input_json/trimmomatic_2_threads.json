@@ -1,0 +1,9 @@
+{
+    "trimmomatic.input_reads": ["tests/tools/input/test_R1.fq.gz"],
+    "trimmomatic.adapters": "tests/tools/input/adapters.fa",
+    "trimmomatic.leading": 3,
+    "trimmomatic.trailing": 3,
+    "trimmomatic.slidingwindow": 4,
+    "trimmomatic.minlen": 36,
+    "trimmomatic.threads": 2
+}
