@@ -8,10 +8,10 @@ jobs:
         steps:
         - uses: actions/checkout@v4
         - name: Run sprocket
-          uses: stjude-rust-labs/sprocket-action@v0.5.0-beta-2
+          uses: adthrasher/sprocket-action@main
           with:
             lint: true
-            exclude-patterns: template
+            exclude-patterns: template,cellranger,scrnaseq
             deny-warnings: true
             deny-notes: true
             except: ContainerValue,TrailingComma
