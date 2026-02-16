@@ -80,19 +80,21 @@ jobs:
           curl -LO https://github.com/reproducible-containers/diffoci/releases/download/v0.1.8/diffoci-v0.1.8.linux-amd64 && \
           chmod +x diffoci-v0.1.8.linux-amd64 && \
           ./diffoci-v0.1.8.linux-amd64 diff --semantic docker://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:${{ env.TAG_TO_CHECK }} docker://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:local | tee comparison.txt
-          cat comparison.txt
           # check result
           changed=0
           deletions=$(grep -c 'only appears in input 0' comparison.txt)
           additions=$(grep -c 'only appears in input 1' comparison.txt)
           modifications=$(grep -v 'only appears in input' comparison.txt | wc -l | tr -d ' ')
           if [ $deletions -gt 0 ]; then
+            echo "Found deletions in the new image compared to the old image, marking as changed"
             changed=1
           fi
           if [ $additions -gt 0 ]; then
+            echo "Found additions in the new image compared to the old image, marking as changed"
             changed=1
           fi
           if [ $modifications -gt 1 ]; then
+            echo "Found modifications in the new image compared to the old image, marking as changed"
             changed=1
           fi
           exit $changed
