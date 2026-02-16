@@ -86,15 +86,15 @@ jobs:
           additions=$(grep -c 'only appears in input 1' comparison.txt)
           modifications=$(grep -v 'only appears in input' comparison.txt | wc -l | tr -d ' ')
           if [ $deletions -gt 0 ]; then
-            echo "Found deletions in the new image compared to the old image, marking as changed"
+            echo "Found deletions in the new image compared to the old image, marking as changed" 1>&2
             changed=1
           fi
           if [ $additions -gt 0 ]; then
-            echo "Found additions in the new image compared to the old image, marking as changed"
+            echo "Found additions in the new image compared to the old image, marking as changed" 1>&2
             changed=1
           fi
           if [ $modifications -gt 1 ]; then
-            echo "Found modifications in the new image compared to the old image, marking as changed"
+            echo "Found modifications in the new image compared to the old image, marking as changed" 1>&2
             changed=1
           fi
           exit $changed
