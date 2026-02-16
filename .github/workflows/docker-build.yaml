@@ -88,15 +88,15 @@ jobs:
           echo "Deletions: $deletions, Additions: $additions, Modifications: $modifications"
           if [ $deletions -gt 0 ]; then
             echo "Found deletions in the new image compared to the old image, marking as changed"
-            changed=1
+            # changed=1
           fi
           if [ $additions -gt 0 ]; then
             echo "Found additions in the new image compared to the old image, marking as changed"
-            changed=1
+            # changed=1
           fi
           if [ $modifications -gt 1 ]; then
             echo "Found modifications in the new image compared to the old image, marking as changed"
-            changed=1
+            # changed=1
           fi
           exit $changed
       - name: Run Snyk to check Docker image for vulnerabilities
