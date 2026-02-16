@@ -77,37 +77,27 @@ jobs:
             echo "Prior image not found in registry, skipping container-diff"
             exit 0
           fi
-          curl -LO https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 && \
-          chmod +x container-diff-linux-amd64 && \
-          ./container-diff-linux-amd64 diff --json daemon://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:${{ env.TAG_TO_CHECK }} daemon://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:local --type=history --type=file --type=size | tee comparison.json
-          # check overall size result
+          curl -LO https://github.com/reproducible-containers/diffoci/releases/download/v0.1.8/diffoci-v0.1.8.linux-amd64 && \
+          chmod +x diffoci-v0.1.8.linux-amd64 && \
+          ./diffoci-v0.1.8.linux-amd64 diff --semantic docker://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:${{ env.TAG_TO_CHECK }} docker://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:local | tee comparison.txt
+          # check result
           changed=0
-          size_diff=$(jq '.[] | select(.DiffType == "Size") | if .Diff[0].Size1 == .Diff[0].Size2 then 1 else 0 end' comparison.json)
-          if [ $size_diff -eq 0 ]
-          then
-            echo "Size of the image has changed"
+          set +e
+          deletions=$(grep -c 'only appears in input 0' comparison.txt)
+          additions=$(grep -c 'only appears in input 1' comparison.txt)
+          modifications=$(grep -v 'only appears in input' comparison.txt | wc -l | tr -d ' ')
+          set -e
+          echo "Deletions: $deletions, Additions: $additions, Modifications: $modifications"
+          if [ $deletions -gt 0 ]; then
+            echo "Found deletions in the new image compared to the old image, marking as changed"
             changed=1
           fi
-          # check file diff result
-          additions=$(jq '.[] | select(.DiffType == "File") | if .Diff.Adds != null then .Diff.Adds[].Name else 0 end' comparison.json)
-          deletions=$(jq '.[] | select(.DiffType == "File") | if .Diff.Dels != null then .Diff.Dels[].Name else 0 end' comparison.json)
-          modifications=$(jq '.[] | select(.DiffType == "File") | if .Diff.Mods != null then .Diff.Mods[].Name else 0 end' comparison.json)
-          if [ "$additions" != "0" ]
-          then
-            echo "Files have been added"
-            echo $additions
+          if [ $additions -gt 0 ]; then
+            echo "Found additions in the new image compared to the old image, marking as changed"
             changed=1
           fi
-          if [ "$deletions" != "0" ]
-          then
-            echo "Files have been deleted"
-            echo $deletions
-            changed=1
-          fi
-          if [ "$modifications" != "0" ]
-          then
-            echo "Files have been modified"
-            echo $modifications
+          if [ $modifications -gt 1 ]; then
+            echo "Found modifications in the new image compared to the old image, marking as changed"
             changed=1
           fi
           exit $changed
