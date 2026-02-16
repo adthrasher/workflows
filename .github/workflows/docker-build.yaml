@@ -83,9 +83,11 @@ jobs:
           ./diffoci-v0.1.8.linux-amd64 diff --semantic docker://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:${{ env.TAG_TO_CHECK }} docker://${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.TOOL }}:local | tee comparison.txt
           # check result
           changed=0
+          set +e
           deletions=$(grep -c 'only appears in input 0' comparison.txt)
           additions=$(grep -c 'only appears in input 1' comparison.txt)
           modifications=$(grep -v 'only appears in input' comparison.txt | wc -l | tr -d ' ')
+          set -e
           echo "Deletions: $deletions, Additions: $additions, Modifications: $modifications"
           if [ $deletions -gt 0 ]; then
             echo "Found deletions in the new image compared to the old image, marking as changed"
